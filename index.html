@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        input, button { display: block; margin: 10px auto; }
+    </style>
+</head>
+<body>
+    <h1>Login para acessar o livro</h1>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+    <button onclick="baixarLivro()">Baixar Livro</button>
+
+    <script>
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const res = await fetch('http://localhost:5000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await res.json();
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+                alert("Login realizado!");
+            } else {
+                alert("Usuário ou senha incorretos");
+            }
+        }
+
+        async function baixarLivro() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("Faça login primeiro");
+                return;
+            }
+
+            const res = await fetch('http://localhost:5000/livro', {
+                headers: { 'Authorization': token }
+            });
+
+            if (res.ok) {
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "livro.pdf";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert("Acesso negado");
+            }
+        }
+    </script>
+</body>
+</html>
