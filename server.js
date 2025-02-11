@@ -6,10 +6,19 @@ const cors = require('cors');
 const multer = require('multer');
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Servir os arquivos estáticos (CSS, JS, etc.) da pasta 'livro-secreto'
+app.use(express.static(path.join(__dirname, 'livro-secreto')));
+
+// Rota para servir o index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'livro-secreto', 'index.html'));
+});
 
 // Configuração do banco de dados SQLite
 const db = new sqlite3.Database('./users.db', (err) => {
@@ -67,3 +76,4 @@ app.get('/livro', (req, res) => {
 
 // Iniciar o servidor
 app.listen(5000, () => console.log("Servidor rodando na porta 5000"));
+
