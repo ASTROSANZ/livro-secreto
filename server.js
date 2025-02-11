@@ -12,12 +12,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Servir os arquivos estáticos (CSS, JS, etc.) da pasta 'livro-secreto'
-app.use(express.static(path.join(__dirname, 'livro-secreto')));
+// Servir os arquivos estáticos (CSS, JS, etc.) da raiz do projeto
+app.use(express.static(path.join(__dirname)));
 
-// Rota para servir o index.html
+// Rota para servir o index.html (na raiz do projeto)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'livro-secreto', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Configuração do banco de dados SQLite
@@ -76,4 +76,3 @@ app.get('/livro', (req, res) => {
 
 // Iniciar o servidor
 app.listen(5000, () => console.log("Servidor rodando na porta 5000"));
-
